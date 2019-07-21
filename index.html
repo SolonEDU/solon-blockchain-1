@@ -15,34 +15,48 @@
     <title>Solon</title>
 </head>
 
-<body>
+<body data-spy="scroll" data-target="#mainNav">
     <!-- Navigation -->
-    <nav class="navbar navbar-toggleable navbar-expand-lg fixed-top navbar-light bg-light">
-        <a class="navbar-brand" href="#">
+    <nav class="navbar navbar-toggleable navbar-expand-lg fixed-top navbar-light bg-light" id="mainNav">
+        <a class="navbar-brand js-scroll-trigger" href="#">
             <img src="img/logo.png" width="50px" class="d-inline-block" alt="solon logo"> Solon
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#home">Home</a>
+                    <a class="nav-link py-3 px-0 px-lg-3 js-scroll-trigger" href="#home">Home</a>
                 </li>
                 <li class="nav-item mx-0 mx-lg-1 dropdown">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About</a>
+                    <a class="nav-link py-3 px-0 px-lg-3 dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#who">Who Are We?</a>
-                        <a class="dropdown-item" href="#what">What Is Solon?</a>
-                        <a class="dropdown-item" href="#uses">What Can Solon Be Used For?</a>
-                        <a class="dropdown-item" href="#security">How Can We Be Sure Solon Is Secure?</a>
+                        <a class="dropdown-item js-scroll-trigger" href="#who">Who Are We?</a>
+                        <a class="dropdown-item js-scroll-trigger" href="#what">What Is Solon?</a>
+                        <a class="dropdown-item js-scroll-trigger" href="#uses">What Can Solon Be Used For?</a>
+                        <a class="dropdown-item js-scroll-trigger" href="#security">How Can We Be Sure Solon Is Secure?</a>
                     </div>
                 </li>
                 <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#getstarted">Get Started</a>
+                    <a class="nav-link py-3 px-0 px-lg-3 js-scroll-trigger" href="#getstarted">Get Started</a>
                 </li>
                 <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
+                    <a class="nav-link py-3 px-0 px-lg-3 js-scroll-trigger" href="#contact">Contact</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1 dropdown">
+                    <a class="nav-link py-3 px-0 px-lg-3 dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Log In</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="slogin.html">Student Log In</a>
+                        <a class="dropdown-item" href="plogin.html">Parent Log In</a>
+                    </div>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1 dropdown">
+                    <a class="nav-link py-3 px-0 px-lg-3 dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign Up</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="ssignup.html">Student Sign Up</a>
+                        <a class="dropdown-item" href="psignup.html">Parent Sign Up</a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -62,7 +76,7 @@
     <!-- About -->
     <section class="page-section" id="about">
         <div class="jumbotron jumbotron-fluid my-auto border bg-light" id="who">
-            <div class="container-fluid text-center">
+            <div class="container-fluid text-center p-5">
                 <div class="row">
                     <div class="col-lg-6 m-auto">
                         <h1 class="display-4">Who Are We?</h1>
@@ -75,7 +89,7 @@
             </div>
         </div>
         <div class="jumbotron jumbotron-fluid my-auto border" id="what">
-            <div class="container-fluid text-center">
+            <div class="container-fluid text-center p-5">
                 <div class="row">
                     <div class="col-lg-6 m-auto">
                         <h1 class="display-4">What Is Solon?</h1>
@@ -89,8 +103,8 @@
                 </div>
             </div>
         </div>
-        <div class="jumbotron jumbotron-fluid my-auto border bg-light" id="uses">
-            <div class="container-fluid text-center">
+        <div class="jumbotron jumbotron-fluid my-auto border bg-light p-auto" id="uses">
+            <div class="container-fluid text-center p-5">
                 <div class="row">
                     <div class="col-lg-6 m-auto">
                         <h1 class="display-4">What Can Solon Be Used For?</h1>
@@ -112,7 +126,7 @@
             </div>
         </div>
         <div class="jumbotron jumbotron-fluid my-auto border" id="security">
-            <div class="container-fluid text-center">
+            <div class="container-fluid text-center p-5">
                 <div class="row">
                     <div class="col-lg-6 m-auto">
                         <h1 class="display-4">How Can We Be Sure Solon Is Secure?</h1>
@@ -133,13 +147,13 @@
             <div class="container text-center">
                 <div class="container py-4">
                     <h1 class="display-4 pb-4">Sign Up</h1>
-                    <button type="button" class="btn btn-outline-success btn-lg mx-3">I'm a Student</button>
-                    <button type="button" class="btn btn-outline-danger btn-lg mx-3">I'm a Parent</button>
+                    <button type="button" class="btn btn-outline-success btn-lg mx-3" onclick=" window.location.href='ssignup.html' ; ">I'm a Student</button>
+                    <button type="button" class="btn btn-outline-danger btn-lg mx-3" onclick=" window.location.href='psignup.html' ; ">I'm a Parent</button>
                 </div>
                 <div class="container py-4">
                     <h1 class="display-4 pb-4">Already a Member? Log In</h1>
-                    <button type="button" class="btn btn-outline-success btn-lg mx-3">I'm a Student</button>
-                    <button type="button" class="btn btn-outline-danger btn-lg mx-3">I'm a Parent</button>
+                    <button type="button" class="btn btn-outline-success btn-lg mx-3" onclick=" window.location.href='slogin.html' ; ">I'm a Student</button>
+                    <button type="button" class="btn btn-outline-danger btn-lg mx-3" onclick=" window.location.href='plogin.html' ; ">I'm a Parent</button>
                 </div>
             </div>
         </div>
@@ -160,6 +174,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>
