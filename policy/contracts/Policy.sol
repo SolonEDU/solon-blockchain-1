@@ -15,8 +15,8 @@ contract Policy {
     uint public option_count;
 
     constructor() public {
-        add_option("yes");
-        add_option("no");
+        add_option("Yes");
+        add_option("No");
     }
 
     function add_option(string memory _name) private {
@@ -31,5 +31,4 @@ contract Policy {
         options[_option_id].vote_count++;
         emit votedEvent(_option_id);
     }
-
 }
