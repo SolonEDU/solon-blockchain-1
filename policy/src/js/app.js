@@ -49,9 +49,15 @@ App = {
     var policy_instance;
     var loader = $("#loader");
     var content = $("#content");
+    var voted = $("#voted");
+    var timer = $("#timer");
+
+    timer.append(new Date().getTime())
 
     loader.show();
     content.hide();
+    voted.hide();
+    timer.hide();
 
     // Load account data
     web3.eth.getCoinbase(function (err, account) { //turn off privacy mode for this to work with MetaMask
@@ -74,7 +80,7 @@ App = {
 
       for (var i = 0; i < option_count; i++) {
         policy_instance.options(i).then(function (option) {
-          var id = option[0];
+          var id = Number(option[0]) + 1;
           var name = option[1];
           var vote_count = option[2];
 
@@ -91,8 +97,10 @@ App = {
       if (hasVoted) {
         $('form').hide();
       }
+      voted.hide();
       loader.hide();
       content.show();
+      timer.show();
     }).catch(function (error) {
       console.warn(error);
     });
@@ -104,7 +112,8 @@ App = {
       return instance.vote(option_id, { from: App.account });
     }).then(function (result) {
       $("#content").hide();
-      $("#loader").show();
+      $("#voted").append("Your vote has been recorded. Refresh the page to see your vote.");
+      $("#voted").show();
     }).catch(function (err) {
       console.error(err);
     });
@@ -113,11 +122,10 @@ App = {
   listenForEvents: function () {
     App.contracts.Policy.deployed().then(function (instance) {
       instance.votedEvent({}, {
-        fromBlock: 'latest',
+        fromBlock: 0,
         toBlock: 'latest'
       }).watch(function (error, event) {
         console.log("event triggered", event)
-        App.render();
       });
     });
   }
