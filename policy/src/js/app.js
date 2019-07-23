@@ -39,7 +39,7 @@ App = {
       // Connect provider to interact with contract
       App.contracts.Policy.setProvider(App.web3Provider);
 
-      // App.listenForEvents();
+      App.listenForEvents();
 
       return App.render();
     });
@@ -52,7 +52,7 @@ App = {
     var voted = $("#voted");
     var timer = $("#timer");
 
-    timer.append(new Date().getTime())
+    App.countdown(timer, new Date("Jul 24, 2019"));
 
     loader.show();
     content.hide();
@@ -84,7 +84,6 @@ App = {
           var name = option[1];
           var vote_count = option[2];
 
-          // Render candidate Result
           var option_template = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + vote_count + "</td></tr>"
           option_results.append(option_template);
 
@@ -128,6 +127,27 @@ App = {
         console.log("event triggered", event)
       });
     });
+  },
+
+  countdown: function (timer, date) {
+    var x = setInterval(function () {
+      timer.empty();
+      var now = new Date().getTime();
+      var distance = date - now;
+
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      timer.append(days + "d " + hours + "h "+ minutes + "m " + seconds + "s ");
+
+      if (distance < 0) {
+        clearInterval(x);
+        timer.append("vote over");
+        $('form').hide();
+      }
+    })
   }
 };
 
