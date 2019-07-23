@@ -474,6 +474,94 @@
             .on('error', console.error);
             
         });
+	    
+	$("#btnAddAllStudents").click(async function() {	
+		    $("#loaderNewVoter").show();
+		    var MongoClient = require('mongodb').MongoClient;
+		    var url = 'mongodb+srv://user:vOKHGnhINES48GyZ@cluster0-e8dnj.mongodb.net/test?retryWrites=true&w=majority'; //cloud uri atlas; replace
+		    var arr;
+
+		    //connect with mongo and retrieve array of all accounts, each acc element has address, name, and voterType attributes
+		    MongoClient.connect(url, function(err, db) {
+			if (err) throw err;
+			var dbo = db.db("mydb");
+			dbo.collection("users").find({}, { projection: { address: 1, osis: 1, type: 1} }).toArray(function(err, result) {
+			    if (err) throw err;
+			    arr = result; //store array of ALL accounts
+			    //console.log(result);
+			    db.close();
+			});
+		    });
+
+		    //for each element in the acc array, 
+		    var mygas = 0;
+		    $.each(arr, function(index, value) { //check if the voterType attributes are stored as strings with ""
+			// if(value.voterType != "student") { //if the voter is not a student, break out of this iteration and continue with the next one
+			//     continue;
+			// }
+			// below not needed...i think
+			// $("#loaderNewVoter").show();
+			// console.log($("#txtNewVoterAddress").val());
+			// console.log($("#txtNewVoterName").val());
+
+			//Ballot = new web3.eth.Contract(ballotABI, BallotContractAddress);
+
+			//estimate first
+
+			Ballot.methods.addVoter(value.address, value.name).estimateGas({from: accountaddress})
+			.then(function(gasAmount){
+			    mygas += gasAmount; //for each addition, add estimate gas amt
+			});
+		    })
+		    //.then(function() { //is then needed...(idts but try anyways )?? try without it see what happens
+			Ballot.methods.addVoter(value.address, value.name).send({
+			    from: accountaddress,
+			    gas: mygas, 
+			    gasPrice: web3.eth.gasPrice       	    
+			})
+			.on('transactionHash', (hash) => {
+			    console.log("a");
+			})
+			.on('receipt', (receipt) => {
+			    console.log("b");            
+
+			})
+			.on('confirmation', (confirmationNumber, receipt) => {
+			    console.log("c");
+			})
+			.on('error', console.error);
+		    //});
+
+		    // console.log($("#txtNewVoterAddress").val());
+		    // console.log($("#txtNewVoterName").val());
+
+		    // //Ballot = new web3.eth.Contract(ballotABI, BallotContractAddress);
+
+		    // //estimate first
+		    // var mygas;
+		    // Ballot.methods.addVoter($("#txtNewVoterAddress").val(), $("#txtNewVoterName").val()).estimateGas({from: accountaddress})
+		    // .then(function(gasAmount){
+		    //     mygas = gasAmount;
+		    // })
+
+			// Ballot.methods.addVoter($("#txtNewVoterAddress").val(), $("#txtNewVoterName").val()).send({
+		    //     from: accountaddress,
+		    //     gas: mygas, 
+		    //     gasPrice: web3.eth.gasPrice       	    
+			// })
+		    // .on('transactionHash', (hash) => {
+		    //     console.log("a");
+		    // })
+		    // .on('receipt', (receipt) => {
+		    //     console.log("b");            
+
+		    // })
+		    // .on('confirmation', (confirmationNumber, receipt) => {
+		    //     console.log("c");
+		    // })
+		    // .on('error', console.error);
+
+		});
         
         $("#btnRefresh").click(async function(){
            refreshContract($("#contractAddress").val()); 
