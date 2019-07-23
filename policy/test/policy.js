@@ -1,5 +1,4 @@
 var Policy = artifacts.require("./Policy.sol");
-var NewPolicy = artifacts.require("./Policy.sol");
 
 contract("Policy", function(accounts) {
     var policy_instance;

@@ -144,7 +144,7 @@ App = {
 
       if (distance < 0) {
         clearInterval(x);
-        timer.append("vote over");
+        timer.append("the vote is over");
         $('form').hide();
       }
     })
