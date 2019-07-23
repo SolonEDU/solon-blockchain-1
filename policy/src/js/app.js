@@ -106,7 +106,7 @@ App = {
   },
 
   castVote: function () {
-    var option_id = $('#option_select').val();
+    var option_id = $('#option_select').val() - 1;
     App.contracts.Policy.deployed().then(function (instance) {
       return instance.vote(option_id, { from: App.account });
     }).then(function (result) {
@@ -125,6 +125,7 @@ App = {
         toBlock: 'latest'
       }).watch(function (error, event) {
         console.log("event triggered", event)
+        App.render();
       });
     });
   },
