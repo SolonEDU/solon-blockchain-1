@@ -17,12 +17,12 @@ contract("Policy", function(accounts) {
             return policy_instance.options(0);
         }).then(function(option) {
             assert.equal(option[0], 0, "contains the correct id");
-            assert.equal(option[1], "yes", "contains the correct name");
+            assert.equal(option[1], "Yes", "contains the correct name");
             assert.equal(option[2], 0, "contains the correct vote count");
             return policy_instance.options(1);
         }).then(function(option) {
             assert.equal(option[0], 1, "contains the correct id");
-            assert.equal(option[1], "no", "contains the correct name");
+            assert.equal(option[1], "No", "contains the correct name");
             assert.equal(option[2], 0, "contains the correct vote count");
         });
     });

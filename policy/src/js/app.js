@@ -29,8 +29,17 @@ App = {
     }
     web3 = new Web3(App.web3Provider);
 
+    // return App.intermediate();
     return App.initContract();
   },
+
+  // intermediate: function() {
+  //   $("#button-click").on("click", function() {
+  //     console.log("intermediate");
+  //     console.log(App.contracts);
+  //     return App.initContract();
+  //   });
+  // },
 
   initContract: function () {
     $.getJSON("Policy.json", function (policy) {
@@ -125,7 +134,7 @@ App = {
         toBlock: 'latest'
       }).watch(function (error, event) {
         console.log("event triggered", event)
-        App.render();
+        // App.render();
       });
     });
   },
