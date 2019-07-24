@@ -146,7 +146,7 @@ App = {
         instance.add_contract();
         return instance.policies(App.policies.length - 1);
       }).then(function(address) {
-        var contract_data = [document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, address, document.getElementById('proposal_time').value];
+        var contract_data = [document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, address, document.getElementById('proposal_time').value, new Date()];
         console.log(contract_data);
         console.log(contract_data[0]);
         App.policies.push(contract_data);
@@ -256,11 +256,11 @@ App = {
     });
   },
 
-  countdown: function (timer, date) {
+  countdown: function (date_creation, date_end) {
     var x = setInterval(function () {
       timer.empty();
       var now = new Date().getTime();
-      var distance = date - now;
+      var distance = date_end.getTime() - date_creation.getTime();
 
       var days = Math.floor(distance / (1000 * 60 * 60 * 24));
       var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
