@@ -144,10 +144,11 @@ App = {
     $("#button-click").on("click", function() {
       App.contracts.PolicyCreator.deployed().then(function(instance) {
         instance.add_contract();
-        return instance.policies(App.policies.length);
+        return instance.policies(App.policies.length - 1);
       }).then(function(address) {
-        var contract_data = [document.getElementById('proposal_name'), document.getElementById('proposal_description'), address, document.getElementById('proposal_time')];
+        var contract_data = [document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, address, document.getElementById('proposal_time').value];
         console.log(contract_data);
+        console.log(contract_data[0]);
         App.policies.push(contract_data);
         console.log(web3.eth.contract(abi).at(address));
       });
