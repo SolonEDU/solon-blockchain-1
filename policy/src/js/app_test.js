@@ -177,9 +177,16 @@ App = {
     var loader = $("#loader");
     var content = $("#content");
     var voted = $("#voted");
-    var timer = $("#timer");
+    //var timer = $("#timer");
+    
 
-    App.countdown(timer, new Date("Jul 25, 2019"));
+    //trying to display proposal info
+    for (var i = 0; i < 8; i++) {
+      var name = $("#name");
+      name.append("Testing");
+    }
+
+    //App.countdown(timer, new Date("Jul 25, 2019"));
 
     loader.show();
     content.hide();
