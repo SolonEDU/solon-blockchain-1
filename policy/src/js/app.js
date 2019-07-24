@@ -42,7 +42,7 @@ App = {
   // },
 
   initContract: function () {
-    $.getJSON("Policy.json", function (policy) {
+    $.getJSON("https://kazijamal.github.io/solon/policy/build/contracts/Policy.json", function (policy) {
       // Instantiate a new truffle contract from the artifact
       App.contracts.Policy = TruffleContract(policy);
       // Connect provider to interact with contract
@@ -61,7 +61,7 @@ App = {
     var voted = $("#voted");
     var timer = $("#timer");
 
-    App.countdown(timer, new Date("Jul 24, 2019"));
+    App.countdown(timer, new Date("Jul 25, 2019"));
 
     loader.show();
     content.hide();
