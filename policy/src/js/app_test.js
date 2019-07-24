@@ -152,8 +152,24 @@ App = {
 
       App.listenForEvents();
 
-      return App.intermediate();
+      return App.create_contract();
     });
+  },
+
+  create_contract: function() {
+    $("#button-click").on("click", function() {
+      App.contracts.PolicyCreator.deployed().then(function(instance) {
+        instance.add_contract();
+        return instance.policies(App.policies.length - 1);
+      }).then(function(address) {
+        var contract_data = [document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, address, document.getElementById('proposal_time').value];
+        console.log(contract_data);
+        console.log(contract_data[0]);
+        App.policies.push(contract_data);
+        console.log(web3.eth.contract(abi).at(address));
+      });
+    });
+    return App.render();
   },
 
   render: function () {
@@ -178,21 +194,22 @@ App = {
       }
     });
 
-    App.contracts.PolicyCreator.deployed().then(function(creator) {
-      policy_creator = creator;
-      return policy_creator.policies(0);
-    }).then(function(first_address) {
-      return web3.eth.contract(abi).at(first_address);
-    }).then(function(first_policy) {
-      first_policy.vote(0, function(error, result) {
-        if(!error) {
-          console.log(result);
-        }
-        else {
-          console.log(error);
-        }
-      });
-    });
+    // App.contracts.PolicyCreator.deployed().then(function(creator) {
+    //   policy_creator = creator;
+    //   return policy_creator.policies(0);
+    // }).then(function(first_address) {
+    //   return web3.eth.contract(abi).at(first_address);
+    // }).then(function(first_policy) {
+    //   first_policy.vote(0, function(error, result) {
+    //     if(!error) {
+    //       console.log(result);
+    //     }
+    //     else {
+    //       console.log(error);
+    //     }
+    //   });
+    // });
+    
     // Load contract data
     // App.contracts.PolicyCreator.deployed().then(function (instance) {
     //   policy_instance = instance;
@@ -281,8 +298,8 @@ App = {
   }
 };
 
-$(function () {
-  $(window).load(function () {
+$(function() {
+  $(window).on('load', function() {
     App.init();
   });
 });
