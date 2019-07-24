@@ -96,6 +96,7 @@ App = {
   contracts: {},
   account: '0x0',
   policies: [[]],
+  history: [],
 
   init: function () {
     return App.initWeb3();
@@ -125,6 +126,21 @@ App = {
 
     // return App.intermediate();
     return App.initContract();
+  },
+
+  create_contract: function() {
+    $("#button-click").on("click", function() {
+      console.log("intermediate");
+      console.log(App.contracts);
+      App.contracts.PolicyCreator.deployed().then(function(instance) {
+        instance.add_contract();
+        return instance.policies(App.policies.length);
+      }).then(function(address) {
+        App.policies.push(address);
+        console.log(web3.eth.contract(abi).at(address));
+      });
+    });
+    return App.render();
   },
 
   initContract: function () {
@@ -193,6 +209,7 @@ App = {
     //     }
     //   });
     // });
+    
     // Load contract data
     // App.contracts.PolicyCreator.deployed().then(function (instance) {
     //   policy_instance = instance;
@@ -271,6 +288,9 @@ App = {
 
       if (distance < 0) {
         clearInterval(x);
+        //App.history.push(App.policies[]);
+        //App.policies.pull()
+        console.log(web3.eth.contract(abi).at(address));
         timer.append("the vote is over");
         $('form').hide();
       }

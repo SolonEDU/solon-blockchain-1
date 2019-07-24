@@ -19,6 +19,15 @@
           <div id="loader">
             <p class="text-center">Loading...</p>
           </div>
+          <div>
+            var myVar = setInterval(myTimer, 1000);
+
+            function myTimer() {
+            var d = new Date();
+            var t = d.toLocaleTimeString();
+            document.getElementById("demo").innerHTML = t;
+}
+          </div>
           <div id="content" style="display: none;">
             <table class="table">
               <thead>

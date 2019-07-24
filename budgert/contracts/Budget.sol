@@ -46,8 +46,37 @@ contract Budget {
     }
 
     // Constructor
-    constructor() public {
-        addCandidate("Candidate 1");
-        addCandidate("Candidate 2");
+    address public creator;
+    string public name;
+    uint public counter;
+
+    constructor(string memory _name, uint _daysAfter) public {
+        addCandidate("Yes");
+        addCandidate("No");
+
+        creator = msg.sender;
+        name = _name;
+        counter = _daysAfter * 1 days;
     }
+
+    // Timer
+
+    function countdown() public {
+        counter = counter - 1000;
+    }
+
+    // Transaction
+
+    function winner() public returns (string memory winner) {
+    
+        if (candidates[1].voteCount > candidates[2].voteCount) {
+            return candidates[1].name;
+        }
+
+        else {
+            return candidates[2].name;
+        }
+    }
+
+
 }
