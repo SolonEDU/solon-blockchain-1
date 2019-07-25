@@ -95,7 +95,7 @@ App = {
   web3Provider: null,
   contracts: {},
   account: '0x0',
-  policies: [[]],
+  policies: [],
   history: [],
 
   init: function () {
@@ -128,21 +128,6 @@ App = {
     return App.initContract();
   },
 
-  create_contract: function() {
-    $("#button-click").on("click", function() {
-      console.log("intermediate");
-      console.log(App.contracts);
-      App.contracts.PolicyCreator.deployed().then(function(instance) {
-        instance.add_contract();
-        return instance.policies(App.policies.length);
-      }).then(function(address) {
-        App.policies.push(address);
-        console.log(web3.eth.contract(abi).at(address));
-      });
-    });
-    return App.render();
-  },
-
   initContract: function () {
     $.getJSON("PolicyCreator.json", function (policy) {
       // Instantiate a new truffle contract from the artifact
@@ -159,14 +144,13 @@ App = {
   create_contract: function() {
     $("#button-click").on("click", function() {
       App.contracts.PolicyCreator.deployed().then(function(instance) {
+        console.log(instance);
         instance.add_contract();
         return instance.policies(App.policies.length - 1);
       }).then(function(address) {
+        console.log(address);
         var contract_data = [document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, address, document.getElementById('proposal_time').value, new Date()];
-        console.log(contract_data);
-        console.log(contract_data[0]);
         App.policies.push(contract_data);
-        console.log(web3.eth.contract(abi).at(address));
       });
     });
     return App.render();
@@ -181,9 +165,15 @@ App = {
     
 
     //trying to display proposal info
-    for (var i = 0; i < 8; i++) {
-      var name = $("#name");
-      name.append("Testing");
+    
+    var display = $("#display");
+
+    for (var id = 0; id < App.policies.length; id++) {
+      var policy_name = "Test";
+      var policy_time = "x";
+      var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + policy_name + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + policy_name + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
+
+      display.append(policy_box);
     }
 
     //App.countdown(timer, new Date("Jul 25, 2019"));
@@ -191,7 +181,7 @@ App = {
     loader.show();
     content.hide();
     voted.hide();
-    timer.hide();
+    // timer.hide();
 
     // Load account data
     web3.eth.getCoinbase(function (err, account) { //turn off privacy mode for this to work with MetaMask
@@ -280,29 +270,29 @@ App = {
     });
   },
 
-  countdown: function (date_creation, date_end) {
-    var x = setInterval(function () {
-      timer.empty();
-      var now = new Date().getTime();
-      var distance = date_end.getTime() - date_creation.getTime();
+  // countdown: function (date_creation, date_end) {
+  //   var x = setInterval(function () {
+  //     timer.empty();
+  //     var now = new Date().getTime();
+  //     var distance = date_end.getTime() - date_creation.getTime();
 
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  //     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  //     var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  //     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  //     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      timer.append(days + "d " + hours + "h "+ minutes + "m " + seconds + "s ");
+  //     timer.append(days + "d " + hours + "h "+ minutes + "m " + seconds + "s ");
 
-      if (distance < 0) {
-        clearInterval(x);
-        //App.history.push(App.policies[]);
-        //App.policies.pull()
-        console.log(web3.eth.contract(abi).at(address));
-        timer.append("the vote is over");
-        $('form').hide();
-      }
-    })
-  }
+  //     if (distance < 0) {
+  //       clearInterval(x);
+  //       //App.history.push(App.policies[]);
+  //       //App.policies.pull()
+  //       console.log(web3.eth.contract(abi).at(address));
+  //       timer.append("the vote is over");
+  //       $('form').hide();
+  //     }
+  //   })
+  // }
 };
 
 $(function() {
