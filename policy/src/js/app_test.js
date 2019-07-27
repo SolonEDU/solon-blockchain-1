@@ -282,18 +282,18 @@ App = {
     //than 0. but, this falls apart when there is more than one proposal because it will clear the interval for the 1st contract but continue
     //running without the data from the other proposals.
     
-    // var x = setInterval(function() {
-    //   if(App.policies.length > 0) {
-    //     clearInterval(x);
-    //     for (var id = 0; id < App.policies.length; id++) {
-    //       console.log(App.policies[id]);
-    //       var policy_name = "Test";
-    //       var policy_time = "x";
-    //       var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + policy_name + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + policy_name + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
-    //       display.append(policy_box);
-    //     }
-    //   }
-    // });
+    var x = setInterval(function() {
+      if(App.policies.length > 0) {
+        clearInterval(x);
+        for (var id = 0; id < App.policies.length; id++) {
+          console.log(App.policies[id]);
+          var policy_name = "Test";
+          var policy_time = "x";
+          var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + policy_name + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + policy_name + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
+          display.append(policy_box);
+        }
+      }
+    });
 
     // loader.show();
     // content.hide();
