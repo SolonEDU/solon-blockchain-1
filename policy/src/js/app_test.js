@@ -199,7 +199,6 @@ App = {
     }
     web3 = new Web3(App.web3Provider);
 
-    // return App.intermediate();
     return App.initContract();
   },
 
@@ -220,6 +219,7 @@ App = {
     $("#button-click").on("click", function () {
       App.contracts.PolicyCreator.deployed().then(function (instance) {
         instance.add_contract(document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, new Date().toString(), document.getElementById('deadline').value);
+        // App.listenForNewContract();
       });
     });
     return App.get_data();
@@ -289,16 +289,16 @@ App = {
 
       var header = "<div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div>"
       var outside = "<div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>Submitted x days ago</div>"
-      
-      var timer = "<p id=\"timer" + id + "\"> </p>"; 
-      var table = "<table class=\"table\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">Option</th><th scope=\"col\">Votes</th></tr></thead><tbody id=\"option_results"+ id +"\"></tbody></table>"
+
+      var timer = "<p id=\"timer" + id + "\"> </p>";
+      var table = "<table class=\"table\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">Option</th><th scope=\"col\">Votes</th></tr></thead><tbody id=\"option_results" + id + "\"></tbody></table>"
       var button = "<button type=\"submit\" class=\"btn btn-primary\">Vote</button>"
-      var form = "<form onSubmit=\"App.castVote(" + id + "); return false;\"><div class=\"form-group\"><label for=\"option_select"+ id +"\">Select Option</label><select class=\"form-control\" id=\"option_select"+ id + "\"></select></div>"+ button + "<hr/></form>"
+      var form = "<form id=\"form" + id + "\" onSubmit=\"App.castVote(" + id + "); return false;\"><div class=\"form-group\"><label for=\"option_select" + id + "\">Select Option</label><select class=\"form-control\" id=\"option_select" + id + "\"></select></div>" + button + "<hr/></form>"
       var body = "<div class=\"modal-body\"><p>" + description + "</p>" + timer + table + form + "</div>"
-      
-      var policy_box = "<div class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\">"+ header + body +"</div></div></div>"+ outside +"</div></div>";
+
+      var policy_box = "<div class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\">" + header + body + "</div></div></div>" + outside + "</div></div>";
       display.append(policy_box);
-      App.countdown(new Date(creation_date),deadline,id,address);
+      App.countdown(new Date(creation_date), deadline, id);
       App.create_table(id);
     }
 
@@ -313,105 +313,62 @@ App = {
         $("#accountAddress").html("Your Account: " + account);
       }
     });
-
-    // Load contract data
-    // App.contracts.PolicyCreator.deployed().then(function (instance) {
-    //   policy_instance = instance;
-    //   return policy_instance.option_count();
-    // }).then(function (option_count) {
-    //   var option_results = $("#option_results");
-    //   option_results.empty();
-
-    //   var option_select = $("#option_select");
-    //   option_select.empty();
-
-    //   for (var i = 0; i < option_count; i++) {
-    //     policy_instance.options(i).then(function (option) {
-    //       var id = Number(option[0]) + 1;
-    //       var name = option[1];
-    //       var vote_count = option[2];
-
-    //       var option_template = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + vote_count + "</td></tr>"
-    //       option_results.append(option_template);
-
-    //       var option_option = "<option value='" + id + "' >" + name + "</option"
-    //       option_select.append(option_option);
-    //     });
-    //   }
-    //   return policy_instance.voters(App.account);
-    // }).then(function (hasVoted) {
-    //   if (hasVoted) {
-    //     $('form').hide();
-    //   }
-    //   voted.hide();
-    //   loader.hide();
-    //   content.show();
-    //   timer.show();
-    // }).catch(function (error) {
-    //   console.warn(error);
-    // });
   },
 
-  create_table: function(policy_id) {
+  create_table: function (policy_id) {
     var policy;
-    App.contracts.PolicyCreator.deployed().then(function(creator) {
+    App.contracts.PolicyCreator.deployed().then(function (creator) {
       return creator.policies(Number(policy_id));
-    }).then(function(address) {
+    }).then(function (address) {
       return web3.eth.contract(abi).at(address);
-    }).then(async function(instance) {
+    }).then(function (instance) {
       policy = instance;
-      return await policy.option_count(function(error,result) {
-        if(!error) {console.log(result)}
-        else {console.log(error)}
-      });
-    }).then(function(option_count) {
-      console.log(option_count)
       var option_results = $("#option_results" + policy_id)
       option_results.empty()
       var option_select = $("#option_select" + policy_id)
       option_select.empty()
-      for(var i = 0; i < option_count; i++) {
-        policy.options(i).then(function(option) {
-          var id = Number(option[0]) + 1;
-          var name = option[1];
-          var vote_count = option[2];
+      for (var i = 0; i < 2; i++) {
+        instance.options(i, function (error, option) {
+          if (!error) {
+            var id = Number(option[0]) + 1;
+            var name = option[1];
+            var vote_count = option[2];
 
-          var option_template = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + vote_count + "</td></tr>"
-          option_results.append(option_template);
+            var option_template = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + vote_count + "</td></tr>"
+            option_results.append(option_template);
 
-          var option_options = "<option value='" + id + "' >" + name + "</option"
-          option_select.append(option_options);
+            var option_options = "<option value='" + id + "'>" + name + "</option"
+            option_select.append(option_options);
+          }
+          else { console.log(error) }
         });
       }
-      return policy.voters(App.account, function(error, result) {
-        if (!error) { console.log(result)}
-        else {console.log(error)}
+      policy.voters(App.account, function (error, hasVoted) {
+        if (!error) {
+          if (hasVoted) {$("#form" + policy_id).hide();}
+        }
+        else { console.log(error) }
       });
-    }).then(function(hasVoted) {
-      if(hasVoted) {
-        $('form').hide();
-      }
-    }).catch(function(error) {
+    }).catch(function (error) {
       console.warn(error);
     });
   },
 
-  castVote: function(policy_id) {
+  castVote: function (policy_id) {
     var option_id = $("#option_select" + policy_id).val() - 1;
-    App.contracts.PolicyCreator.deployed().then(function(creator) {
+    App.contracts.PolicyCreator.deployed().then(function (creator) {
       return creator.policies(Number(policy_id));
-    }).then(function(address) {
+    }).then(function (address) {
       return web3.eth.contract(abi).at(address);
-    }).then(function(policy) {
-      policy.vote(option_id, function(error, result) {
-        if(!error) {console.log(result)}
-        else {console.log(error)}
+    }).then(function (policy) {
+      policy.vote(option_id, function (error, result) {
+        if (!error) {
+          App.listenForNewVote(policy_id);
+        }
+        else { console.log(error) }
       });
     });
   },
-  // $("#content").hide();
-  // $("#voted").append("Your vote has been recorded. Refresh the page to see your vote.");
-  // $("#voted").show();
 
   listenForNewContract: function () {
     App.contracts.PolicyCreator.deployed().then(function (instance) {
@@ -425,8 +382,26 @@ App = {
     });
   },
 
-  countdown: function (proposal_creation, deadline, id,address) {
-    // var timer_node = document.getElementById("timer" + id.toString());
+  listenForNewVote: function (policy_id) {
+    App.contracts.PolicyCreator.deployed().then(function (creator) {
+      return creator.policies(Number(policy_id));
+    }).then(function (address) {
+      return web3.eth.contract(abi).at(address);
+    }).then(function (policy) {
+      policy.votedEvent({}, {
+        fromBlock: 'latest',
+        toBlock: 'latest'
+      }).watch(function (error, event) {
+        console.log("event triggered", event)
+        $("#modal" + policy_id).modal('hide');
+        $("#display").empty();
+        App.render();
+        $("#modal" + policy_id).modal('show');
+      });
+    });
+  },
+
+  countdown: function (proposal_creation, deadline, id) {
     var timer = $("#timer" + id.toString());
     var end = new Date();
     end.setDate(proposal_creation.getDate() + Number(deadline));
@@ -451,7 +426,7 @@ App = {
         //App.policies.pull()
         timer.empty();
         timer.append("the vote is over");
-        $('form').hide();
+        $('#form' + id).hide();
       }
     })
   }
