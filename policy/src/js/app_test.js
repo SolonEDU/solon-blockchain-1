@@ -287,10 +287,11 @@ App = {
       var creation_date = App.policies[id][3];
       var deadline = App.policies[id][4];
 
-      var header = "<div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div>"
-      var outside = "<div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>Submitted x days ago</div>"
+      var timer = "<p class=\"timer" + id + "\"> </p>";
 
-      var timer = "<p id=\"timer" + id + "\"> </p>";
+      var header = "<div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div>"
+      var outside = "<div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>"+ timer + "</div>"
+
       var table = "<table class=\"table\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">Option</th><th scope=\"col\">Votes</th></tr></thead><tbody id=\"option_results" + id + "\"></tbody></table>"
       var button = "<button type=\"submit\" class=\"btn btn-primary\">Vote</button>"
       var form = "<form id=\"form" + id + "\" onSubmit=\"App.castVote(" + id + "); return false;\"><div class=\"form-group\"><label for=\"option_select" + id + "\">Select Option</label><select class=\"form-control\" id=\"option_select" + id + "\"></select></div>" + button + "<hr/></form>"
@@ -402,7 +403,7 @@ App = {
   },
 
   countdown: function (proposal_creation, deadline, id) {
-    var timer = $("#timer" + id.toString());
+    var timer = $(".timer" + id.toString());
     var end = new Date();
     end.setDate(proposal_creation.getDate() + Number(deadline));
     end.setHours(proposal_creation.getHours());
