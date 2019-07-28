@@ -171,7 +171,11 @@ App = {
   contracts: {},
   account: '0x0',
   policies: [],
+<<<<<<< HEAD
   policy_count: 0,
+=======
+  history: [],
+>>>>>>> master
 
   init: function () {
     return App.initWeb3();
@@ -215,11 +219,24 @@ App = {
     });
   },
 
+<<<<<<< HEAD
   create_contract: function () {
     $("#button-click").on("click", function () {
       App.contracts.PolicyCreator.deployed().then(function (instance) {
         instance.add_contract(document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, new Date().toString(), document.getElementById('deadline').value);
         // App.listenForNewContract();
+=======
+  create_contract: function() {
+    $("#button-click").on("click", function() {
+      App.contracts.PolicyCreator.deployed().then(function(instance) {
+        console.log(instance);
+        instance.add_contract();
+        return instance.policies(App.policies.length - 1);
+      }).then(function(address) {
+        console.log(address);
+        var contract_data = [document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, address, document.getElementById('proposal_time').value, new Date()];
+        App.policies.push(contract_data);
+>>>>>>> master
       });
     });
     return App.get_data();
@@ -227,6 +244,7 @@ App = {
 
   get_data: function () {
     var policy_creator;
+<<<<<<< HEAD
     var policy_address;
     App.contracts.PolicyCreator.deployed().then(function (instance) {
       policy_creator = instance;
@@ -306,6 +324,32 @@ App = {
     // loader.show();
     // content.hide();
     // voted.hide();
+=======
+    var loader = $("#loader");
+    var content = $("#content");
+    var voted = $("#voted");
+    //var timer = $("#timer");
+    
+
+    //trying to display proposal info
+    
+    var display = $("#display");
+
+    for (var id = 0; id < App.policies.length; id++) {
+      var policy_name = "Test";
+      var policy_time = "x";
+      var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + policy_name + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + policy_name + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
+
+      display.append(policy_box);
+    }
+
+    //App.countdown(timer, new Date("Jul 25, 2019"));
+
+    loader.show();
+    content.hide();
+    voted.hide();
+    // timer.hide();
+>>>>>>> master
 
     // Load account data
     web3.eth.getCoinbase(function (err, account) { //turn off privacy mode for this to work with MetaMask
@@ -402,6 +446,7 @@ App = {
     });
   },
 
+<<<<<<< HEAD
   countdown: function (proposal_creation, deadline, id) {
     var timer = $(".timer" + id.toString());
     var end = new Date();
@@ -413,12 +458,20 @@ App = {
       timer.empty();
       var now = new Date().getTime();
       var distance = end.getTime() - now;
+=======
+  // countdown: function (date_creation, date_end) {
+  //   var x = setInterval(function () {
+  //     timer.empty();
+  //     var now = new Date().getTime();
+  //     var distance = date_end.getTime() - date_creation.getTime();
+>>>>>>> master
 
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  //     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  //     var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  //     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  //     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+<<<<<<< HEAD
       timer.append(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
 
       if (distance < 0) {
@@ -431,6 +484,20 @@ App = {
       }
     })
   }
+=======
+  //     timer.append(days + "d " + hours + "h "+ minutes + "m " + seconds + "s ");
+
+  //     if (distance < 0) {
+  //       clearInterval(x);
+  //       //App.history.push(App.policies[]);
+  //       //App.policies.pull()
+  //       console.log(web3.eth.contract(abi).at(address));
+  //       timer.append("the vote is over");
+  //       $('form').hide();
+  //     }
+  //   })
+  // }
+>>>>>>> master
 };
 
 $(function () {
