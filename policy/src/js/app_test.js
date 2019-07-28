@@ -227,7 +227,7 @@ App = {
 
   get_data: function () {
     var policy_creator;
-    var policy_address; 
+    var policy_address;
     App.contracts.PolicyCreator.deployed().then(function (instance) {
       policy_creator = instance;
       return policy_creator.contract_count();
@@ -241,31 +241,31 @@ App = {
           var data = []
           contract.name(function (error, result) {
             if (!error) { data.push(result); }
-            else {console.log(error); }
+            else { console.log(error); }
           });
-          contract.description(function(error, result) {
-            if(!error) {data.push(result);}
-            else {console.log(error);}
+          contract.description(function (error, result) {
+            if (!error) { data.push(result); }
+            else { console.log(error); }
           });
           data.push(policy_address);
-          contract.creation(function(error, result) {
-            if(!error) {data.push(result);}
-            else {console.log(error);}
+          contract.creation(function (error, result) {
+            if (!error) { data.push(result); }
+            else { console.log(error); }
           });
-          contract.deadline(function(error, result) {
-            if(!error) {data.push(result);}
-            else {console.log(error);}
+          contract.deadline(function (error, result) {
+            if (!error) { data.push(result); }
+            else { console.log(error); }
           });
-          var push_data = setInterval(function() {
-            if(data.length == 5) {
+          var push_data = setInterval(function () {
+            if (data.length == 5) {
               App.policies.push(data);
               clearInterval(push_data);
             }
           }, 1000);
         });
       }
-    }).then(function() {
-      var x = setInterval(function() {
+    }).then(function () {
+      var x = setInterval(function () {
         if (App.policies.length == App.policy_count) {
           App.render();
           clearInterval(x);
@@ -274,23 +274,27 @@ App = {
     });
   },
 
-
   render: function () {
     // var loader = $("#loader");
     // var content = $("#content");
     // var voted = $("#voted");
-    var timer = $("#timer");
     var display = $("#display");
     for (var id = 0; id < App.policies.length; id++) {
-      var policy_time = "x";
-      var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + App.policies[id][1] + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + App.policies[id][1] + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
+      var address = App.policies[id][0];
+      var name = App.policies[id][1];
+      var description = App.policies[id][2];
+      var creation_date = App.policies[id][3];
+      var deadline = App.policies[id][4];
+      var timer = "<p id=\"timer" + id + "\"> </p>"; 
+      var policy_box = "<div class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div><div class=\"modal-body\"><p>" + description + "</p>" + timer + "</div></div></div></div><div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>Submitted x days ago</div></div></div>";
       display.append(policy_box);
+      App.countdown(new Date(creation_date),deadline,id,address);
     }
 
     // loader.show();
     // content.hide();
     // voted.hide();
-    // timer.hide();
+    // App.countdown(new Date(),1);
 
     // Load account data
     web3.eth.getCoinbase(function (err, account) { //turn off privacy mode for this to work with MetaMask
@@ -379,12 +383,19 @@ App = {
     });
   },
 
-  countdown: function (proposal_creation, deadline) {
-    var timer = $("#timer");
+  countdown: function (proposal_creation, deadline, id,address) {
+    console.log(proposal_creation);
+    var timer_node = document.getElementById("timer" + id.toString());
+    var timer = $("#timer" + id.toString());
     var end = new Date();
     end.setDate(proposal_creation.getDate() + Number(deadline));
+    end.setHours(proposal_creation.getHours());
+    end.setMinutes(proposal_creation.getMinutes());
+    end.setSeconds(proposal_creation.getSeconds());
     var x = setInterval(function () {
-      // if(timer.hasChildNodes()) {}
+      if (timer_node.hasChildNodes()) {
+        timer_node.removeChild(timer_node.childNodes[0])
+      }
       var now = new Date().getTime();
       var distance = end.getTime() - now;
 
@@ -399,7 +410,9 @@ App = {
         clearInterval(x);
         //App.history.push(App.policies[]);
         //App.policies.pull()
-        console.log(web3.eth.contract(abi).at(address));
+        if (timer_node.hasChildNodes()) {
+          timer_node.removeChild(timer_node.childNodes[0]);
+        }
         timer.append("the vote is over");
         $('form').hide();
       }
