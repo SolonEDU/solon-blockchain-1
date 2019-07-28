@@ -171,6 +171,7 @@ App = {
   contracts: {},
   account: '0x0',
   policies: [],
+  policy_count: 0,
 
   init: function () {
     return App.initWeb3();
@@ -218,11 +219,10 @@ App = {
   create_contract: function () {
     $("#button-click").on("click", function () {
       App.contracts.PolicyCreator.deployed().then(function (instance) {
-        //passes info to the policy creator contract 
         instance.add_contract(document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, new Date().toString(), document.getElementById('deadline').value);
       });
     });
-    return App.render();
+    return App.get_data();
   },
 
   get_data: function () {
@@ -232,11 +232,8 @@ App = {
       policy_creator = instance;
       return policy_creator.contract_count();
     }).then(function (count) {
+      App.policy_count = count;
       for (var i = 0; i < count; i++) {
-        //for each policy in the contract count, retrieve the policy and get the data to push into a javascript array 
-        //would it be better if we just went from blockchain straight to display?
-        //or should we get from blockchain, to js array, and then to display 
-
         policy_creator.policies(i).then(function (address) {
           policy_address = address;
           return web3.eth.contract(abi).at(address);
@@ -259,9 +256,21 @@ App = {
             if(!error) {data.push(result);}
             else {console.log(error);}
           });
-          App.policies.push(data);
+          var push_data = setInterval(function() {
+            if(data.length == 5) {
+              App.policies.push(data);
+              clearInterval(push_data);
+            }
+          }, 1000);
         });
       }
+    }).then(function() {
+      var x = setInterval(function() {
+        if (App.policies.length == App.policy_count) {
+          App.render();
+          clearInterval(x);
+        }
+      }, 1000);
     });
   },
 
@@ -270,30 +279,13 @@ App = {
     // var loader = $("#loader");
     // var content = $("#content");
     // var voted = $("#voted");
-    // var timer = $("#timer");
+    var timer = $("#timer");
     var display = $("#display");
-
-    App.get_data();
-
-    console.log(App.policies.length);
-    //a problem i encountered was that the js array was still registering as having a length of 0 even after pushing data into it 
-    //this is bc of latency 
-    //this set interval function was meant to prevent the rest of the function from running before the length registered to at least be greater
-    //than 0. but, this falls apart when there is more than one proposal because it will clear the interval for the 1st contract but continue
-    //running without the data from the other proposals.
-    
-    var x = setInterval(function() {
-      if(App.policies.length > 0) {
-        clearInterval(x);
-        for (var id = 0; id < App.policies.length; id++) {
-          console.log(App.policies[id]);
-          var policy_name = "Test";
-          var policy_time = "x";
-          var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + policy_name + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + policy_name + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
-          display.append(policy_box);
-        }
-      }
-    });
+    for (var id = 0; id < App.policies.length; id++) {
+      var policy_time = "x";
+      var policy_box = "<div class=\"col-sm-3\"> <div class=\"container\"> <div class=\"modal\" id=\"mymodal\"> <div class=\"modal-dialog\"> <div class=\"modal-content\"> <div class=\"modal-header\"> <h2 class=\"modal-title\">" + App.policies[id][1] + "</h2> <button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button> </div> <div class=\"modal-body\"> <p> Proposal Information</p> </div> </div> </div> </div> <div class=\"p-3 mb-2 bg-light text-dark\"> <h4 id=\"name\"><a href=\"#\" data-toggle=\"modal\" data-target=\"#mymodal\">" + App.policies[id][1] + "</a></h4> Submitted " + policy_time + " days ago </div> </div> </div>";
+      display.append(policy_box);
+    }
 
     // loader.show();
     // content.hide();
@@ -388,6 +380,7 @@ App = {
   },
 
   countdown: function (proposal_creation, deadline) {
+    var timer = $("#timer");
     var end = new Date();
     end.setDate(proposal_creation.getDate() + Number(deadline));
     var x = setInterval(function () {
