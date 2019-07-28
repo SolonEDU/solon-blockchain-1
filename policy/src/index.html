@@ -23,34 +23,17 @@
   <br>
   <h5 class="text-center">Ongoing Proposals</h5>
   <p class="text-center">Click on any proposal to view details or vote.</p>
-  <p class="text-center" id="accountAddress"></p>
 
   <br>
 
+  <!--Policy Boxes-->
   <div class="row" id="display">
-    <!-- <div class="col-sm-3">
-      <div class="container">
-        <div class="modal" id="mymodal">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2 class="modal-title">Policy Proposal Name</h2>
-                <button class="close" type="button" data-dismiss="modal">x</button>
-              </div>
-              <div class="modal-body">
-                <p>Proposal Information</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="p-3 mb-2 bg-light text-dark">
-          <h4><a href="#" data-toggle="modal" data-target="#mymodal">Name of Proposal</a></h4>
-          Submitted x days ago
-        </div>
-      </div>
-    </div> -->
   </div>
+
   <br>
+
+  <!--End of Policy Boxes-->
+
 
   <!--New Policy Form-->
   <div class="modal fade" id="newpolicy" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -88,7 +71,7 @@
           <br>
           Time Span
           <div class="slidecontainer">
-            <input type="range" min="1" max="7" value="1" class="slider" style="width:75%" id="deadline">
+            <input type="range" min="1" max="7" value="1" class="slider" style="width:75%" id="proposal_time">
             <p>
               <i>This proposal will expire in:</i>
               <b><span id="demo"><b></span> day(s)
@@ -117,7 +100,7 @@
   <!--End of New Policy Button-->
 
   <script>
-    var slider = document.getElementById("deadline");
+    var slider = document.getElementById("proposal_time");
     var output = document.getElementById("demo");
     output.innerHTML = slider.value;
 
@@ -125,17 +108,16 @@
       output.innerHTML = this.value;
     }
   </script>
-
+  
+  
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
     crossorigin="anonymous"></script>
-
   <script>
     $('.modal').on('hidden.bs.modal', function () {
       $(this).find('form')[0].reset();
     });
   </script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
     crossorigin="anonymous"></script>
