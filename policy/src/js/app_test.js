@@ -210,7 +210,7 @@ App = {
       // Connect provider to interact with contract
       App.contracts.PolicyCreator.setProvider(App.web3Provider);
 
-      App.listenForEvents();
+      App.listenForNewContract();
 
       return App.create_contract();
     });
@@ -280,21 +280,31 @@ App = {
     // var voted = $("#voted");
     var display = $("#display");
     for (var id = 0; id < App.policies.length; id++) {
+
       var address = App.policies[id][0];
       var name = App.policies[id][1];
       var description = App.policies[id][2];
       var creation_date = App.policies[id][3];
       var deadline = App.policies[id][4];
+
+      var header = "<div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div>"
+      var outside = "<div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>Submitted x days ago</div>"
+      
       var timer = "<p id=\"timer" + id + "\"> </p>"; 
-      var policy_box = "<div class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div><div class=\"modal-body\"><p>" + description + "</p>" + timer + "</div></div></div></div><div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>Submitted x days ago</div></div></div>";
+      var table = "<table class=\"table\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">Option</th><th scope=\"col\">Votes</th></tr></thead><tbody id=\"option_results"+ id +"\"></tbody></table>"
+      var button = "<button type=\"submit\" class=\"btn btn-primary\">Vote</button>"
+      var form = "<form onSubmit=\"App.castVote(" + id + "); return false;\"><div class=\"form-group\"><label for=\"option_select"+ id +"\">Select Option</label><select class=\"form-control\" id=\"option_select"+ id + "\"></select></div>"+ button + "<hr/></form>"
+      var body = "<div class=\"modal-body\"><p>" + description + "</p>" + timer + table + form + "</div>"
+      
+      var policy_box = "<div class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\">"+ header + body +"</div></div></div>"+ outside +"</div></div>";
       display.append(policy_box);
       App.countdown(new Date(creation_date),deadline,id,address);
+      App.create_table(id);
     }
 
     // loader.show();
     // content.hide();
     // voted.hide();
-    // App.countdown(new Date(),1);
 
     // Load account data
     web3.eth.getCoinbase(function (err, account) { //turn off privacy mode for this to work with MetaMask
@@ -303,22 +313,6 @@ App = {
         $("#accountAddress").html("Your Account: " + account);
       }
     });
-
-    // App.contracts.PolicyCreator.deployed().then(function(creator) {
-    //   policy_creator = creator;
-    //   return policy_creator.policies(0);
-    // }).then(function(first_address) {
-    //   return web3.eth.contract(abi).at(first_address);
-    // }).then(function(first_policy) {
-    //   first_policy.vote(0, function(error, result) {
-    //     if(!error) {
-    //       console.log(result);
-    //     }
-    //     else {
-    //       console.log(error);
-    //     }
-    //   });
-    // });
 
     // Load contract data
     // App.contracts.PolicyCreator.deployed().then(function (instance) {
@@ -358,20 +352,68 @@ App = {
     // });
   },
 
-  castVote: function () {
-    var option_id = $('#option_select').val() - 1;
-    App.contracts.PolicyCreator.deployed().then(function (instance) {
-      return instance.vote(option_id, { from: App.account });
-    }).then(function (result) {
-      $("#content").hide();
-      $("#voted").append("Your vote has been recorded. Refresh the page to see your vote.");
-      $("#voted").show();
-    }).catch(function (err) {
-      console.error(err);
+  create_table: function(policy_id) {
+    var policy;
+    App.contracts.PolicyCreator.deployed().then(function(creator) {
+      return creator.policies(Number(policy_id));
+    }).then(function(address) {
+      return web3.eth.contract(abi).at(address);
+    }).then(async function(instance) {
+      policy = instance;
+      return await policy.option_count(function(error,result) {
+        if(!error) {console.log(result)}
+        else {console.log(error)}
+      });
+    }).then(function(option_count) {
+      console.log(option_count)
+      var option_results = $("#option_results" + policy_id)
+      option_results.empty()
+      var option_select = $("#option_select" + policy_id)
+      option_select.empty()
+      for(var i = 0; i < option_count; i++) {
+        policy.options(i).then(function(option) {
+          var id = Number(option[0]) + 1;
+          var name = option[1];
+          var vote_count = option[2];
+
+          var option_template = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + vote_count + "</td></tr>"
+          option_results.append(option_template);
+
+          var option_options = "<option value='" + id + "' >" + name + "</option"
+          option_select.append(option_options);
+        });
+      }
+      return policy.voters(App.account, function(error, result) {
+        if (!error) { console.log(result)}
+        else {console.log(error)}
+      });
+    }).then(function(hasVoted) {
+      if(hasVoted) {
+        $('form').hide();
+      }
+    }).catch(function(error) {
+      console.warn(error);
     });
   },
 
-  listenForEvents: function () {
+  castVote: function(policy_id) {
+    var option_id = $("#option_select" + policy_id).val() - 1;
+    App.contracts.PolicyCreator.deployed().then(function(creator) {
+      return creator.policies(Number(policy_id));
+    }).then(function(address) {
+      return web3.eth.contract(abi).at(address);
+    }).then(function(policy) {
+      policy.vote(option_id, function(error, result) {
+        if(!error) {console.log(result)}
+        else {console.log(error)}
+      });
+    });
+  },
+  // $("#content").hide();
+  // $("#voted").append("Your vote has been recorded. Refresh the page to see your vote.");
+  // $("#voted").show();
+
+  listenForNewContract: function () {
     App.contracts.PolicyCreator.deployed().then(function (instance) {
       instance.NewContract({}, {
         fromBlock: 0,
@@ -384,8 +426,7 @@ App = {
   },
 
   countdown: function (proposal_creation, deadline, id,address) {
-    console.log(proposal_creation);
-    var timer_node = document.getElementById("timer" + id.toString());
+    // var timer_node = document.getElementById("timer" + id.toString());
     var timer = $("#timer" + id.toString());
     var end = new Date();
     end.setDate(proposal_creation.getDate() + Number(deadline));
@@ -393,9 +434,7 @@ App = {
     end.setMinutes(proposal_creation.getMinutes());
     end.setSeconds(proposal_creation.getSeconds());
     var x = setInterval(function () {
-      if (timer_node.hasChildNodes()) {
-        timer_node.removeChild(timer_node.childNodes[0])
-      }
+      timer.empty();
       var now = new Date().getTime();
       var distance = end.getTime() - now;
 
@@ -410,9 +449,7 @@ App = {
         clearInterval(x);
         //App.history.push(App.policies[]);
         //App.policies.pull()
-        if (timer_node.hasChildNodes()) {
-          timer_node.removeChild(timer_node.childNodes[0]);
-        }
+        timer.empty();
         timer.append("the vote is over");
         $('form').hide();
       }
