@@ -1,82 +1,42 @@
 pragma solidity ^0.5.0;
 
-contract Budget {
-    // Model a Candidate
-    struct Candidate {
+import "./ERC20.sol";
+
+contract Budget is ERC20 {
+
+    address public owner;
+
+    event votedEvent(uint indexed _option_id);
+
+    struct Option{
         uint id;
         string name;
-        uint voteCount;
+        uint vote_count;
     }
 
-    // Store accounts that have voted
+    mapping(uint => Option) public options;
     mapping(address => bool) public voters;
+    uint public option_count;
 
-    // Voting
-    function vote (uint _candidateId) public {
-        // require that they haven't voted before
-        require(!voters[msg.sender]);
+    constructor(address _owner) public {
+        owner = _owner;
+        add_option("Yes");
+        add_option("No");
 
-        // require a valid candidate
-        require(_candidateId > 0 && _candidateId <= candidatesCount);
+        //Test
+        //transferFrom(0x1d91a4c2F20e037a7F00F78318AE49346361B28C, owner, 1 ether);
+    }
 
-        // record that voter has voted
+    function add_option(string memory _name) private {
+        options[option_count] = Option(option_count, _name, 0);
+        option_count++;
+    }
+
+    function vote(uint _option_id) public {
+        require(!voters[msg.sender], "user already voted");
+        require(_option_id >= 0 && _option_id < option_count, "invalid option");
         voters[msg.sender] = true;
-
-        // update candidate vote Count
-        candidates[_candidateId].voteCount ++;
-
-        // trigger voted event
-        emit votedEvent(_candidateId);
+        options[_option_id].vote_count++;
+        emit votedEvent(_option_id);
     }
-
-    event votedEvent (
-        uint indexed _candidateId
-    );
-
-    // Read/write candidate
-    mapping(uint => Candidate) public candidates;
-
-    // Store Candidates Count
-    uint public candidatesCount;
-
-    // Add Candidate
-    function addCandidate (string memory _name) private {
-        candidatesCount ++;
-        candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
-    }
-
-    // Constructor
-    address public creator;
-    string public name;
-    uint public counter;
-
-    constructor(string memory _name, uint _daysAfter) public {
-        addCandidate("Yes");
-        addCandidate("No");
-
-        creator = msg.sender;
-        name = _name;
-        counter = _daysAfter * 1 days;
-    }
-
-    // Timer
-
-    function countdown() public {
-        counter = counter - 1000;
-    }
-
-    // Transaction
-
-    function winner() public returns (string memory winner) {
-    
-        if (candidates[1].voteCount > candidates[2].voteCount) {
-            return candidates[1].name;
-        }
-
-        else {
-            return candidates[2].name;
-        }
-    }
-
-
 }
