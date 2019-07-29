@@ -382,10 +382,15 @@ App = {
         toBlock: 'latest'
       }).watch(function (error, event) {
         console.log("event triggered", event)
+        console.log(creator.last_sender())
         $("#newbudget").modal('hide');
       });
-      console.log(creator.last_sender.balance);
-    });
+      return creator.budgets(0);
+    }).then(function(contract2) {
+        return web3.eth.contract(abi).at(contract2);
+    }).then(function(a) {
+      a.test();
+    }); //Will give value in.
   },
 
   listenForNewVote: function (budget_id) {

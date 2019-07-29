@@ -24,7 +24,11 @@ contract Budget is ERC20 {
         add_option("No");
 
         //Test
-        //transferFrom(0x1d91a4c2F20e037a7F00F78318AE49346361B28C, owner, 1 ether);
+        //transferFrom(owner, 0x1d91a4c2F20e037a7F00F78318AE49346361B28C, 1 ether);
+    }
+
+    function test() public {
+        transferFrom(owner, 0x1d91a4c2F20e037a7F00F78318AE49346361B28C, 1 ether);
     }
 
     function add_option(string memory _name) private {
