@@ -14,7 +14,7 @@ contract("PolicyCreator", function(accounts) {
     it("creates a new contract", function() {
         return PolicyCreator.deployed().then(function(instance) {
             policy_creator = instance;
-            return policy_creator.add_contract();
+            return policy_creator.add_contract("name", "Desc", "creation", "deadline");
         }).then(function(receipt){
             assert.equal(receipt.logs.length, 1, "an event was triggered");
             return policy_creator.contract_count();
