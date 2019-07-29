@@ -175,7 +175,7 @@
   "source": "pragma solidity ^0.5.0;\r\n\r\ncontract Policy {\r\n\r\n    event votedEvent(uint indexed _option_id);\r\n\r\n    struct Option{\r\n        uint id;\r\n        string name;\r\n        uint vote_count;\r\n    }\r\n\r\n    mapping(uint => Option) public options;\r\n    mapping(address => bool) public voters;\r\n    uint public option_count;\r\n    string public name;\r\n    string public description;\r\n    string public creation;\r\n    string public deadline;\r\n\r\n    constructor(string memory _name, string memory _description, string memory _creation, string memory _deadline) public {\r\n        add_option(\"Yes\");\r\n        add_option(\"No\");\r\n        name = _name;\r\n        description = _description;\r\n        creation = _creation;\r\n        deadline = _deadline;\r\n    }\r\n\r\n    function add_option(string memory _name) private {\r\n        options[option_count] = Option(option_count, _name, 0);\r\n        option_count++;\r\n    }\r\n\r\n    function vote(uint _option_id) public {\r\n        require(!voters[msg.sender], \"user already voted\");\r\n        require(_option_id >= 0 && _option_id < option_count, \"invalid option\");\r\n        voters[msg.sender] = true;\r\n        options[_option_id].vote_count++;\r\n        emit votedEvent(_option_id);\r\n    }\r\n}\r\n",
   "sourcePath": "C:\\Users\\shark\\Documents\\solon\\policy\\contracts\\Policy.sol",
   "ast": {
-    "absolutePath": "/C/Users/Michael/solon/policy/contracts/Policy.sol",
+    "absolutePath": "/C/Users/shark/Documents/solon/policy/contracts/Policy.sol",
     "exportedSymbols": {
       "Policy": [
         186
@@ -1854,7 +1854,7 @@
     "src": "0:1212:1"
   },
   "legacyAST": {
-    "absolutePath": "/C/Users/Michael/solon/policy/contracts/Policy.sol",
+    "absolutePath": "/C/Users/shark/Documents/solon/policy/contracts/Policy.sol",
     "exportedSymbols": {
       "Policy": [
         186
@@ -3551,7 +3551,7 @@
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-07-28T18:24:49.299Z",
+  "updatedAt": "2019-07-29T14:35:12.112Z",
   "devdoc": {
     "methods": {}
   },
