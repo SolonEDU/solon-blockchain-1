@@ -219,7 +219,6 @@ App = {
     $("#button-click").on("click", function () {
       App.contracts.PolicyCreator.deployed().then(function (instance) {
         instance.add_contract(document.getElementById('proposal_name').value, document.getElementById('proposal_description').value, new Date().toString(), document.getElementById('deadline').value);
-        // App.listenForNewContract();
       });
     });
     return App.get_data();
@@ -275,10 +274,11 @@ App = {
   },
 
   render: function () {
-    // var loader = $("#loader");
-    // var content = $("#content");
-    // var voted = $("#voted");
-    var display = $("#display");
+    App.display_history();
+    App.display_ongoing();
+    var display = $("#ongoing_display");
+    var history = $("#past_display")
+    history.hide();
     for (var id = 0; id < App.policies.length; id++) {
 
       var address = App.policies[id][0];
@@ -290,22 +290,19 @@ App = {
       var timer = "<p class=\"timer" + id + "\"> </p>";
 
       var header = "<div class=\"modal-header\"><h2 class=\"modal-title\">" + name + "</h2><button class=\"close\" type=\"button\" data-dismiss=\"modal\">x</button></div>"
-      var outside = "<div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>"+ timer + "</div>"
+      var outside = "<div class=\"p-3 mb-2 bg-light text-dark\"><h4><a href=\"#\" data-toggle=\"modal\" data-target=\"#" + "modal" + id + "\">" + name + "</a></h4>" + timer + "</div>"
 
       var table = "<table class=\"table\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">Option</th><th scope=\"col\">Votes</th></tr></thead><tbody id=\"option_results" + id + "\"></tbody></table>"
       var button = "<button type=\"submit\" class=\"btn btn-primary\">Vote</button>"
       var form = "<form id=\"form" + id + "\" onSubmit=\"App.castVote(" + id + "); return false;\"><div class=\"form-group\"><label for=\"option_select" + id + "\">Select Option</label><select class=\"form-control\" id=\"option_select" + id + "\"></select></div>" + button + "<hr/></form>"
       var body = "<div class=\"modal-body\"><p>" + description + "</p>" + timer + table + form + "</div>"
 
-      var policy_box = "<div class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\">" + header + body + "</div></div></div>" + outside + "</div></div>";
+      var policy_box = "<div id=\"box" + id + "\" class=\"col-sm-3\"><div class=\"container\"><div class=\"modal\" id=\"" + "modal" + id + "\"><div class=\"modal-dialog\"><div class=\"modal-content\">" + header + body + "</div></div></div>" + outside + "</div></div>";
       display.append(policy_box);
-      App.countdown(new Date(creation_date), deadline, id);
+      App.countdown(new Date(creation_date), deadline, id, policy_box);
       App.create_table(id);
-    }
 
-    // loader.show();
-    // content.hide();
-    // voted.hide();
+    }
 
     // Load account data
     web3.eth.getCoinbase(function (err, account) { //turn off privacy mode for this to work with MetaMask
@@ -346,7 +343,7 @@ App = {
       }
       policy.voters(App.account, function (error, hasVoted) {
         if (!error) {
-          if (hasVoted) {$("#form" + policy_id).hide();}
+          if (hasVoted) { $("#form" + policy_id).hide(); }
         }
         else { console.log(error) }
       });
@@ -368,6 +365,22 @@ App = {
         }
         else { console.log(error) }
       });
+    });
+  },
+
+  display_history: function () {
+    $("#history").on("click", function () {
+      $("#ongoing_display").hide();
+      $("#past_display").show();
+      $(".fixed-bottom").hide();
+    });
+  },
+
+  display_ongoing: function () {
+    $("#ongoing").on("click", function () {
+      $("#past_display").hide();
+      $("#ongoing_display").show();
+      $(".fixed-bottom").show();
     });
   },
 
@@ -395,19 +408,18 @@ App = {
       }).watch(function (error, event) {
         console.log("event triggered", event)
         $("#modal" + policy_id).modal('hide');
-        $("#display").empty();
-        App.render();
+        App.create_table(policy_id);
         $("#modal" + policy_id).modal('show');
       });
     });
   },
 
-  countdown: function (proposal_creation, deadline, id) {
+  countdown: function (proposal_creation, deadline, id, policy_box) {
     var timer = $(".timer" + id.toString());
     var end = new Date();
-    end.setDate(proposal_creation.getDate() + Number(deadline));
+    end.setDate(proposal_creation.getDate());
     end.setHours(proposal_creation.getHours());
-    end.setMinutes(proposal_creation.getMinutes());
+    end.setMinutes(proposal_creation.getMinutes() + Number(deadline));
     end.setSeconds(proposal_creation.getSeconds());
     var x = setInterval(function () {
       timer.empty();
@@ -423,13 +435,14 @@ App = {
 
       if (distance < 0) {
         clearInterval(x);
-        //App.history.push(App.policies[]);
-        //App.policies.pull()
+        $('#box' + id).remove();
+        $('#past_display').append(policy_box);
         timer.empty();
         timer.append("the vote is over");
+        App.create_table(id);
         $('#form' + id).hide();
       }
-    })
+    }, 1000)
   }
 };
 
